@@ -1,0 +1,27 @@
+// server.js
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('private message', (msg) => {
+    // Assuming you have a user authentication system in place
+    // and you can get the recipient's socket id
+    const recipientSocketId = 'recipient_socket_id_here';
+    io.to(recipientSocketId).emit('private message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
